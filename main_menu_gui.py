@@ -1,6 +1,9 @@
 import sys
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QListWidget, QTextEdit, QPushButton, QLabel, QSplitter, QListWidgetItem
 from PyQt6.QtCore import Qt
+from logic import get_folders_for_user, get_file_content
+from database import user_get_folder
+from pathlib import Path
 
 STYLESHEET = """
 QMainWindow {
@@ -63,8 +66,9 @@ QSplitter::handle:horizontal {
 """
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, username):
         super().__init__()
+        self.active_user = username
 
         self.setWindowTitle("Easy2notes")
         self.setGeometry(200, 200, 1000, 600)
@@ -106,23 +110,21 @@ class MainWindow(QMainWindow):
         self.logout_button.clicked.connect(self.logout)
 
     def populate_placeholder_data(self):
-        placeholder_notes = [
-            "Список покупок.txt",
-            "Идеи для проекта Яндекс.Лицея.txt",
-            "Важные ссылки.md",
-            "Рецепт борща.txt",
-            "План на выходные.txt"
-        ]
+        from login_and_register_gui import LoginMenu
+
+        login_menu = LoginMenu()
+        placeholder_notes = get_folders_for_user(self.active_user)
         self.notes_list_widget.addItems(placeholder_notes)
         self.notes_list_widget.setCurrentRow(0)
         self.text_editor.setPlaceholderText("Выберите заметку из списка, чтобы начать редактирование...")
 
     def note_selected(self, current_item: QListWidgetItem):
         if current_item is not None:
-            note_title = current_item.text()
-            self.text_editor.setText(
-                f"1"
-            )
+            note_filename = current_item.text()
+            user_notes_folder = user_get_folder(self.active_user)
+            full_path_to_note = Path(user_notes_folder) / note_filename
+            content = get_file_content(full_path_to_note)
+            self.text_editor.setText(content)
         else:
             self.text_editor.clear()
             self.text_editor.setPlaceholderText("Выберите заметку из списка...")
@@ -136,7 +138,7 @@ class MainWindow(QMainWindow):
             pass
 
     def create_new_note(self):
-        new_note_name = f"Новая заметка {self.notes_list_widget.count() + 1}.txt"
+        new_note_name = f"{self.notes_list_widget.count() + 1}.txt"
         self.notes_list_widget.addItem(new_note_name)
         self.notes_list_widget.setCurrentRow(self.notes_list_widget.count() - 1)
         self.text_editor.clear()

@@ -136,7 +136,7 @@ class LoginMenu(QWidget):
                 self.active_user = login
                 self.go_to_main_menu()
             else:
-                QMessageBox.warning(self, "Ошибка входа", "Неверный пароль.")
+                QMessageBox.warning(self, "Ошибка входа", "Неверный пароль.")   
 
     def open_register_window(self):
         self.register_window = RegisterMenu()
@@ -144,10 +144,10 @@ class LoginMenu(QWidget):
         self.close()
 
     def go_to_main_menu(self):
-        self.mmenu = MainWindow()
+        self.mmenu = MainWindow(username=self.active_user) 
         self.mmenu.show()
         self.close()
-    
+        
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
