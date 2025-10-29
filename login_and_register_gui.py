@@ -1,7 +1,7 @@
 import sys
 from PyQt6 import QtWidgets, QtCore
 from PyQt6.QtWidgets import QApplication, QWidget, QMessageBox, QMenuBar, QMainWindow
-
+from main_menu_gui import MainWindow
 from database import add_new_user, check_login, login_user
 
 
@@ -80,6 +80,7 @@ class LoginMenu(QWidget):
         super().__init__()
         self.register_window = None
         self.main_app_window = None 
+        self.active_user = None
         self.setupUi()
 
     def setupUi(self):
@@ -132,6 +133,7 @@ class LoginMenu(QWidget):
         else:
             if login_user(login, password):
                 QMessageBox.information(self, "Успех", f"Добро пожаловать, {login}!")
+                self.active_user = login
                 self.go_to_main_menu()
             else:
                 QMessageBox.warning(self, "Ошибка входа", "Неверный пароль.")
@@ -142,20 +144,10 @@ class LoginMenu(QWidget):
         self.close()
 
     def go_to_main_menu(self):
-        self.mmenu = MainMenu()
+        self.mmenu = MainWindow()
         self.mmenu.show()
         self.close()
-
-class MainMenu(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("Easy2note MainMenu") 
-        self.setupUi()
-
-    def setupUi(self):
-        self.bar = self.menuBar()
-
-
+    
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
