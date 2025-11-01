@@ -1,7 +1,7 @@
 import sys
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QListWidget, QTextEdit, QPushButton, QLabel, QSplitter, QListWidgetItem
 from PyQt6.QtCore import Qt
-from logic import get_folders_for_user, get_file_content
+from logic import get_folders_for_user, get_file_content, create_file
 from database import user_get_folder
 from pathlib import Path
 

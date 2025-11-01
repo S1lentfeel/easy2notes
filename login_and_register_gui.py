@@ -3,7 +3,7 @@ from PyQt6 import QtWidgets, QtCore
 from PyQt6.QtWidgets import QApplication, QWidget, QMessageBox, QMenuBar, QMainWindow
 from main_menu_gui import MainWindow
 from database import add_new_user, check_login, login_user
-
+from logic import detect_lang
 
 class RegisterMenu(QWidget):
     def __init__(self):
@@ -50,12 +50,36 @@ class RegisterMenu(QWidget):
         login = self.input_login.text()
         password = self.input_password.text()
 
+        if detect_lang(login) == "ru":
+            QMessageBox.warning(
+                self, 
+                "Ошибка", 
+                "ЛОГИН должен быть написан на английском языке."
+            )
+            return
+        
+        if detect_lang(password) == "ru":
+            QMessageBox.warning(
+                self, 
+                "Ошибка", 
+                "ПАРОЛЬ должен быть написан на английском языке."
+            )
+            return
+
         if not login or not password:
-            QMessageBox.warning(self, "Ошибка", "Логин и пароль не могут быть пустыми.")
+            QMessageBox.warning(
+                self, 
+                "Ошибка", 
+                "Логин и пароль не могут быть пустыми."
+            )
             return
 
         if password != self.input_password_confirm.text():
-            QMessageBox.warning(self, "Ошибка", "Пароли не совпадают.")
+            QMessageBox.warning(
+                self, 
+                "Ошибка", 
+                "Пароли не совпадают."
+            )
             return
         
         if check_login(login):

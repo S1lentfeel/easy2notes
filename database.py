@@ -12,7 +12,7 @@ def add_new_user(login, password):
         cursor = conn.cursor()
         cursor.execute('INSERT INTO users (login, password) VALUES (?, ?)', (login, hashed_password))
         create_user_folder(login)
-        cursor.execute('INSERT INTO folders (login, login_folder) VALUES (?, ?)', (login, fr"C:\Users\Silentfeel\easy2notes_folders\Папка {login}"))
+        cursor.execute('INSERT INTO folders (login, login_folder) VALUES (?, ?)', (login, fr"C:\Users\Silentfeel\easy2notes_folders\Folder_{login}"))
         
 
 def check_login(login):
@@ -63,7 +63,7 @@ def create_user_folder(login):
         Path(fr"C:\Users\Silentfeel\easy2notes_folders").mkdir()
     except Exception:
         pass
-    Path(fr"C:\Users\Silentfeel\easy2notes_folders\Папка {login}").mkdir()
+    Path(fr"C:\Users\Silentfeel\easy2notes_folders\Folder_{login}").mkdir()
 
 
 def user_get_folder(login):
