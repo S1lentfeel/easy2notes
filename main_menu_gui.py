@@ -1,7 +1,7 @@
 import sys
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QListWidget, QTextEdit, QPushButton, QLabel, QSplitter, QListWidgetItem
 from PyQt6.QtCore import Qt
-from logic import get_folders_for_user, get_file_content, create_file
+from logic import get_folders_for_user, get_file_content, update_file_content
 from database import user_get_folder
 from pathlib import Path
 
@@ -132,17 +132,28 @@ class MainWindow(QMainWindow):
     def save_note(self):
         current_item = self.notes_list_widget.currentItem()
         if current_item:
-            note_title = current_item.text()
+            note_filename = current_item.text()
             note_content = self.text_editor.toPlainText()
+            user_notes_folder = user_get_folder(self.active_user)
+            full_path_to_note = Path(user_notes_folder) / note_filename
+            update_file_content(full_path_to_note, note_content)
         else:
             pass
 
     def create_new_note(self):
         new_note_name = f"{self.notes_list_widget.count() + 1}.txt"
-        self.notes_list_widget.addItem(new_note_name)
-        self.notes_list_widget.setCurrentRow(self.notes_list_widget.count() - 1)
-        self.text_editor.clear()
-        self.text_editor.setFocus()
+        user_notes_folder = user_get_folder(self.active_user)
+        full_path_to_note = Path(user_notes_folder) / new_note_name
+
+        try:
+            with open(full_path_to_note, 'w', encoding='utf-8') as f:
+                pass
+            self.notes_list_widget.addItem(new_note_name)
+            self.notes_list_widget.setCurrentRow(self.notes_list_widget.count() - 1)
+            self.text_editor.clear()
+            self.text_editor.setFocus()
+        except Exception:
+            pass
 
     def logout(self):
         from login_and_register_gui import LoginMenu

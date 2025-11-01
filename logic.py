@@ -35,11 +35,9 @@ def get_file_content(path_to_file):
     return strokovoi_array
 
 
-def create_file(path):
+def update_file_content(file_path, content):
     try:
-        with open("file.txt", "x+", encoding="utf-8"):
-            pass
-    except FileExistsError:
+        with open(file_path, 'w', encoding='utf-8') as f:
+            f.write(content)
+    except Exception:
         pass
-
-    
