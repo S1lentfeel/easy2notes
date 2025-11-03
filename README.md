@@ -37,7 +37,7 @@
 
 <!--Пользовательская документация-->
 ## Releases
-https://github.com/OkulusDev/Oxygen/releases
+https://github.com/S1lentfeel/easy2notes/releases
 
 ## Поддержка
 Если у вас возникли сложности или вопросы по использованию пакета, создайте 
