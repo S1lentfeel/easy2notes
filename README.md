@@ -1,4 +1,4 @@
-# Oxygen
+# Easy2notes
 Универсальное ПО для написания заметок <!-- описание репозитория -->
 <!--Блок информации о репозитории в бейджах-->
 ![Static Badge](https://img.shields.io/badge/S1lentfeel-easy2notes)
