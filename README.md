@@ -37,7 +37,7 @@
 
 <!--Пользовательская документация-->
 ## Releases
-[Релизы программы]: https://github.com/OkulusDev/Oxygen/releases
+https://github.com/OkulusDev/Oxygen/releases
 
 ## Поддержка
 Если у вас возникли сложности или вопросы по использованию пакета, создайте 
