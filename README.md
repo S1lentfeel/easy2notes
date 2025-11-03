@@ -1,5 +1,5 @@
 # Oxygen
-Программное обеспечение для инженерных вычислений, научно-естественных наук, математики и алгоритмов <!-- описание репозитория -->
+Универсальное ПО для написания заметок <!-- описание репозитория -->
 <!--Блок информации о репозитории в бейджах-->
 ![Static Badge](https://img.shields.io/badge/S1lentfeel-easy2notes)
 ![GitHub top language](https://img.shields.io/github/languages/top/S1lentfeel/easy2notes)
