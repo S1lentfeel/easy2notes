@@ -4,6 +4,7 @@ from PyQt6.QtWidgets import QApplication, QWidget, QMessageBox, QMenuBar, QMainW
 from main_menu_gui import MainWindow
 from database import add_new_user, check_login, login_user
 from logic import detect_lang
+from face_login_gui import FaceLoginWindow
 
 class RegisterMenu(QWidget):
     def __init__(self):
@@ -109,7 +110,7 @@ class LoginMenu(QWidget):
 
     def setupUi(self):
         self.setObjectName("Dialog")
-        self.resize(560, 350)
+        self.resize(560, 390)
 
         self.text_login = QtWidgets.QLabel(self)
         self.text_login.setGeometry(QtCore.QRect(0, 10, 560, 51))
@@ -141,7 +142,12 @@ class LoginMenu(QWidget):
         self.goto_register_button.setGeometry(QtCore.QRect(190, 300, 161, 31))
         self.goto_register_button.setText("Зарегистрироваться")
         self.goto_register_button.clicked.connect(self.open_register_window)
-        
+
+        self.face_login_button = QtWidgets.QPushButton(self)
+        self.face_login_button.setGeometry(QtCore.QRect(190, 340, 161, 31))
+        self.face_login_button.setText("Войти по Face ID")
+        self.face_login_button.clicked.connect(self.open_face_login)
+
         self.setWindowTitle("Вход")
 
     def attempt_login(self):
@@ -167,8 +173,13 @@ class LoginMenu(QWidget):
         self.register_window.show()
         self.close()
 
+    def open_face_login(self):
+        self.face_window = FaceLoginWindow()
+        self.face_window.show()
+        self.close()
+
     def go_to_main_menu(self):
-        self.mmenu = MainWindow(username=self.active_user) 
+        self.mmenu = MainWindow(username=self.active_user)
         self.mmenu.show()
         self.close()
         

@@ -1,9 +1,10 @@
 import sys
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QListWidget, QTextEdit, QPushButton, QLabel, QSplitter, QListWidgetItem
 from PyQt6.QtCore import Qt
-from logic import get_folders_for_user, get_file_content, update_file_content
-from database import user_get_folder
+from logic import get_folders_for_user, get_file_content, update_file_content, capture_face_encoding
+from database import user_get_folder, get_face_encodings, store_face_encoding
 from pathlib import Path
+from PyQt6.QtWidgets import QMessageBox
 
 STYLESHEET = """
 QMainWindow {
@@ -109,6 +110,11 @@ class MainWindow(QMainWindow):
         self.new_note_button.clicked.connect(self.create_new_note)
         self.logout_button.clicked.connect(self.logout)
 
+        if not get_face_encodings(self.active_user):
+            self.register_face_button = QPushButton("Зарегистрировать лицо")
+            buttons_layout.addWidget(self.register_face_button)
+            self.register_face_button.clicked.connect(self.register_face)
+
     def populate_placeholder_data(self):
         from login_and_register_gui import LoginMenu
 
@@ -155,11 +161,20 @@ class MainWindow(QMainWindow):
         except Exception:
             pass
 
+    def register_face(self):
+        try:
+            encoding = capture_face_encoding()
+            store_face_encoding(self.active_user, encoding.tolist())
+            QMessageBox.information(self, "Успех", "Лицо зарегистрировано!")
+            self.register_face_button.hide()
+        except Exception as e:
+            QMessageBox.warning(self, "Ошибка", f"Не удалось зарегистрировать лицо: {str(e)}")
+
     def logout(self):
         from login_and_register_gui import LoginMenu
 
         self.login_window = LoginMenu()
-        self.login_window.show() 
+        self.login_window.show()
         self.close()
         
 
