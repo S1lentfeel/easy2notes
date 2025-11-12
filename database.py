@@ -14,12 +14,12 @@ def get_base_dir():
     return str(BASE_DIR)
 
 
-def update_dir(dir, name_of_path_when_add):
-    updated_dir = os.path.join(dir, name_of_path_when_add)
+def update_dir(dir, *args):
+    updated_dir = os.path.join(dir, *args)
     return updated_dir
 
 
-def add_new_user(login, password):
+def add_new_user(login, password, email):
     hashed_password = hash_password(password)
 
     with sqlite3.connect("easy2notes_base.db") as conn:
@@ -31,7 +31,7 @@ def add_new_user(login, password):
             f"{login}_folder"
         )
 
-        cursor.execute('INSERT INTO users (login, password) VALUES (?, ?)', (login, hashed_password))
+        cursor.execute('INSERT INTO users (login, password, email) VALUES (?, ?, ?)', (login, hashed_password, email))
         create_user_folder(login)
         cursor.execute('INSERT INTO folders (login, login_folder) VALUES (?, ?)', (login, f"{login_path}"))
     return         
@@ -46,7 +46,19 @@ def check_login(login):
             return False
         else:
             return True
-    
+
+
+def check_email(email):
+    with sqlite3.connect("easy2notes_base.db") as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT email FROM users WHERE email = ?", (email,))
+        result = cursor.fetchone()
+
+        if result is None:
+            return False
+        else:
+            return True
+
 
 def login_user(login, password):
     with sqlite3.connect("easy2notes_base.db") as conn:
@@ -66,11 +78,13 @@ def login_user(login, password):
 def create_tbl_if_not_exist():
     with sqlite3.connect("easy2notes_base.db") as conn:
         cursor = conn.cursor()
+        
         cursor.execute('''
     CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY,
     login TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL
+    password TEXT NOT NULL,
+    email TEXT NOT NULL
     )
     ''')
         
@@ -144,5 +158,13 @@ def get_face_encodings(login):
         
         encodings = [json.loads(row[0]) for row in results]
         return encodings
+
+
+def update_password(email, new_password):
+    hashed_password = hash_password(new_password)
+    with sqlite3.connect("easy2notes_base.db") as conn:
+        cursor = conn.cursor()
+        cursor.execute("UPDATE users SET password = ? WHERE email = ?", (hashed_password, email))
+    return
     
 create_tbl_if_not_exist()
