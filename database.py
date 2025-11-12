@@ -5,7 +5,8 @@ import os
 from pathlib import Path
 
 def hash_password(password):
-    return hashlib.sha256(password.encode()).hexdigest()
+    hashed_password = hashlib.sha256(password.encode()).hexdigest()
+    return hashed_password
 
 
 def get_base_dir():
@@ -13,14 +14,27 @@ def get_base_dir():
     return str(BASE_DIR)
 
 
+def update_dir(dir, name_of_path_when_add):
+    updated_dir = os.path.join(dir, name_of_path_when_add)
+    return updated_dir
+
+
 def add_new_user(login, password):
     hashed_password = hash_password(password)
+
     with sqlite3.connect("easy2notes_base.db") as conn:
         cursor = conn.cursor()
+
+        login_path = update_dir(
+            get_base_dir(),
+            "easy2notes_folders", 
+            f"{login}_folder"
+        )
+
         cursor.execute('INSERT INTO users (login, password) VALUES (?, ?)', (login, hashed_password))
         create_user_folder(login)
-        cursor.execute('INSERT INTO folders (login, login_folder) VALUES (?, ?)', (login, f"{get_base_dir()}/easy2notes/Folder_{login}"))
-        
+        cursor.execute('INSERT INTO folders (login, login_folder) VALUES (?, ?)', (login, f"{login_path}"))
+    return         
 
 def check_login(login):
     with sqlite3.connect("easy2notes_base.db") as conn:
@@ -80,16 +94,35 @@ def create_tbl_if_not_exist():
 
 def create_user_folder(login):
     try:
-        Path(f"{get_base_dir()}/easy2notes").mkdir()
+        easy2notes_folders_path = update_dir(
+            get_base_dir(),
+            "easy2notes_folders"
+        )
+
+        Path(f"{easy2notes_folders_path}").mkdir()
     except Exception:
         pass
-    Path(f"{get_base_dir()}/easy2notes/Folder_{login}").mkdir()
+    
+    try:
+        path_to_login = update_dir(
+            get_base_dir(),
+            "easy2notes_folders",
+            f"{login}_folder"
+        )
+
+        Path(f"{path_to_login}").mkdir()
+    except Exception:
+        pass
+    
+    return
 
 
 def user_get_folder(login):
     with sqlite3.connect("easy2notes_base.db") as conn:
         cursor = conn.cursor()
+        
         cursor.execute("SELECT login_folder FROM folders WHERE login = ?", (login,))
+        
         result = cursor.fetchone()
         return result[0]
 
@@ -98,14 +131,17 @@ def store_face_encoding(login, encoding):
     encoding_json = json.dumps(encoding)
     with sqlite3.connect("easy2notes_base.db") as conn:
         cursor = conn.cursor()
-        cursor.execute('INSERT INTO face_encodings (login, encoding) VALUES (?, ?)', (login, encoding_json))
 
+        cursor.execute('INSERT INTO face_encodings (login, encoding) VALUES (?, ?)', (login, encoding_json))
+        return
 
 def get_face_encodings(login):
     with sqlite3.connect("easy2notes_base.db") as conn:
         cursor = conn.cursor()
+
         cursor.execute("SELECT encoding FROM face_encodings WHERE login = ?", (login,))
         results = cursor.fetchall()
+        
         encodings = [json.loads(row[0]) for row in results]
         return encodings
     
