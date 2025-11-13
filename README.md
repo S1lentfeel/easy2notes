@@ -31,7 +31,7 @@
 
 ```pip3 install -r requirements.txt```
 
-6. Запуск скрипта для демонстрации возможностей Oxygen
+6. Запуск скрипта для демонстрации возможностей easy2notes
 
 ```python3 login_and_register_gui.py```
 
